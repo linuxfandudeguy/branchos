@@ -13,12 +13,10 @@ function loadAppsSequentially(appFiles, callback, delay = 100) {
             return;
         }
 
-        const s = document.createElement("script");
-        s.src = appFiles[index];
-        s.onload = () => {
-            setTimeout(() => loadNext(index + 1), delay);
-        };
-        document.body.appendChild(s);
+        const script = document.createElement("script");
+        script.src = appFiles[index];
+        script.onload = () => setTimeout(() => loadNext(index + 1), delay);
+        document.body.appendChild(script);
     }
 
     loadNext(0);
@@ -30,14 +28,12 @@ function loadAppsSequentially(appFiles, callback, delay = 100) {
 function openWindow(id, html, title) {
     let win = document.getElementById(id);
 
-    if (win && win.style.display === "none") {
-        win.style.display = "block";
-        win.style.zIndex = zIndexCounter++;
-        delete minimizedWindows[id];
-        return;
-    }
-
     if (win) {
+        // Restore minimized
+        if (win.style.display === "none") {
+            win.style.display = "block";
+            delete minimizedWindows[id];
+        }
         win.style.zIndex = zIndexCounter++;
         return;
     }
@@ -73,18 +69,18 @@ function openWindow(id, html, title) {
 }
 
 /* ================================
-   DRAG FUNCTION
+   MAKE WINDOW DRAGGABLE
 ================================ */
 function makeDraggable(wrapper) {
     const bar = wrapper.querySelector(".title-bar");
-    bar.onmousedown = function (e) {
+    bar.onmousedown = function(e) {
         const rect = wrapper.getBoundingClientRect();
         const offsetX = e.clientX - rect.left;
         const offsetY = e.clientY - rect.top;
 
-        function move(e) {
-            wrapper.style.left = e.clientX - offsetX + "px";
-            wrapper.style.top = e.clientY - offsetY + "px";
+        function move(ev) {
+            wrapper.style.left = ev.clientX - offsetX + "px";
+            wrapper.style.top = ev.clientY - offsetY + "px";
         }
 
         document.addEventListener("mousemove", move);
@@ -130,7 +126,7 @@ function closeWindow(btn) {
 /* ================================
    INITIALIZE DESKTOP & TASKBAR
 ================================ */
-const appFiles = ["apps/about.js", "apps/terminal.js"]; 
+const appFiles = ["apps/about.js", "apps/terminal.js"];
 
 window.onload = () => {
     loadAppsSequentially(appFiles, (apps) => {
@@ -138,16 +134,17 @@ window.onload = () => {
         const taskbar = document.getElementById("taskbar");
 
         apps.forEach(app => {
-            // Desktop icon
+            // Create desktop icon
             const desktopIcon = document.createElement("div");
             desktopIcon.className = "desktop-icon";
+            desktopIcon.id = `desktop-icon-${app.id}`;
             desktopIcon.innerHTML = app.icon.includes("bi-")
-                ? `<i class="bi ${app.icon}"></i><br>${app.title}`
-                : app.icon;
+                ? `<i class="bi ${app.icon}"></i><span>${app.title}</span>`
+                : `<span>${app.title}</span>`;
             desktopIcon.onclick = () => openWindow(app.id, app.html, app.title);
             desktop.appendChild(desktopIcon);
 
-            // Taskbar button if taskbar: true
+            // Add to taskbar if taskbar:true
             if (app.taskbar) {
                 const btn = document.createElement("button");
                 btn.innerHTML = app.icon.includes("bi-") ? `<i class="bi ${app.icon}"></i>` : app.icon;
@@ -156,5 +153,5 @@ window.onload = () => {
                 taskbar.appendChild(btn);
             }
         });
-    }, 100); // delay in ms between loading each app
+    }, 100); // 100ms delay between loading apps
 };
