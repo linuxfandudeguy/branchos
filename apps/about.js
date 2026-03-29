@@ -2,9 +2,8 @@
 
 const settingsApp = {
     id: "about",
-    icon: "bi-gear-fill",
+    icon: "bi bi-newspaper",
     title: "About",
-    fullscreen: false, // optional, default true if omitted
     html: `
         <div style="padding:20px;font-family:Segoe UI,sans-serif;color:#111;max-width:600px;margin:auto;line-height:1.6;">
     <h2 style="margin-bottom:10px;">About ブランチ</h2>
@@ -21,8 +20,7 @@ const settingsApp = {
         <li>Explore a growing ecosystem of community-made modules</li>
     </ul>
 
-    <p>Version: <strong>1.0.0</strong></p>
-    <p>Developed by: <strong>ブランチ Team</strong></p>
+    <p>Developed by: <strong>linuxfandudeguy</strong></p>
 
     <button id="visitWebsiteBtn" class="btn btn-primary" style="margin-top:15px;">Visit Official Website</button>
 </div>
