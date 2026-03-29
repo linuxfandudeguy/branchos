@@ -1,7 +1,7 @@
 .desktop-icon {
     position: relative; /* required for absolute positioning of highlight */
     width: 80px;
-    display: flex;
+    display: inline-flex; /* side by side */
     flex-direction: column;
     align-items: center;
     text-align: center;
@@ -10,7 +10,6 @@
     color: #ffffff;
     cursor: pointer;
     user-select: none;
-    transition: transform 0.15s, color 0.15s;
 }
 
 .desktop-icon i {
@@ -18,32 +17,21 @@
     z-index: 1; /* bring icon above highlight */
 }
 
-/* Optional: icon background highlight */
+/* Icon background highlight only behind the icon */
 .desktop-icon::before {
     content: '';
     position: absolute;
-    top: 50%;
+    top: 0;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
     width: 64px;
     height: 64px;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 12px;
     z-index: 0; /* behind icon */
-    transition: background 0.15s;
 }
 
-/* Hover effect */
-.desktop-icon:hover {
-    transform: scale(1.2);
-    color: #00aaff; /* accent hover color */
-}
-
-.desktop-icon:hover::before {
-    background: rgba(0, 170, 255, 0.15); /* highlight changes on hover */
-}
-
-/* Text below icon */
+/* Text below icon, not part of highlight */
 .desktop-icon span {
     display: block;
     white-space: nowrap;
