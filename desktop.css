@@ -7,7 +7,6 @@
     padding: 20px;
     gap: 20px;
     align-items: flex-start;
-    background: #0a246a; /* Optional: fallback background color */
     height: 100%;
 }
 
