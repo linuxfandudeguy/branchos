@@ -8,7 +8,7 @@ const settingsApp = {
         <div style="padding:20px;font-family:Segoe UI,sans-serif;color:#111;max-width:600px;margin:auto;line-height:1.6;">
     <h2 style="margin-bottom:10px;">About ブランチ</h2>
     
-    <img src="assets/logo.png" alt="Branch Logo" style="width:120px;height:auto;margin-bottom:15px;border-radius:10px;">
+    <img src="branch.png" alt="Branch Logo" style="width:120px;height:auto;margin-bottom:15px;border-radius:10px;">
 
     <p>ブランチ (Branch) is an Web-based OS designed for modern users who want a seamless, modular, and lightweight computing experience directly in their browser. Customize your workflow, explore apps, and enjoy a responsive interface built with simplicity in mind.</p>
     
