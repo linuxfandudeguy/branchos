@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>wasmdsl</title>
+<title>terminal</title>
 <script src="./libv86.js"></script>
 <style>
     html, body {
@@ -14,8 +14,6 @@
         overflow: hidden;
         display: flex;
         flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
     }
 
     #toolbar {
@@ -34,14 +32,6 @@
         background-color: black;
         position: relative;
     }
-
-    #screen_container canvas {
-        width: 640px;  /* displayed width */
-        height: 480px; /* displayed height */
-        image-rendering: pixelated;
-        background-color: black;
-        cursor: none;
-    }
 </style>
 </head>
 <body>
@@ -51,16 +41,13 @@
         <hr style="border-color: white;">
     </div>
 
-    <div id="screen_container">
-        <canvas></canvas>
-    </div>
+    <div id="screen_container"></div>
 
 <script>
 "use strict";
 
 window.onload = function() {
     const screenContainer = document.getElementById("screen_container");
-    const canvas = screenContainer.querySelector("canvas");
 
     // Initialize emulator
     var emulator = new V86({
@@ -75,24 +62,28 @@ window.onload = function() {
         screen_height: 480
     });
 
-    // Automatically scale canvas to fit window while preserving 640x480 ratio
-    function scaleCanvas() {
-        const windowRatio = window.innerWidth / window.innerHeight;
-        const canvasRatio = 640 / 480;
-        let scale;
-        if(windowRatio > canvasRatio) {
-            // window is wider -> fit by height
-            scale = window.innerHeight / 480;
-        } else {
-            // window is taller -> fit by width
-            scale = window.innerWidth / 640;
-        }
-        canvas.style.transform = `scale(${scale})`;
-        canvas.style.transformOrigin = "top left";
-    }
+    // Wait until v86 has created the canvas
+    emulator.add_listener("screen-mode-change", function() {
+        const canvas = emulator.screen.canvas;
+        if (!canvas) return;
 
-    window.addEventListener("resize", scaleCanvas);
-    scaleCanvas();
+        // Automatically scale canvas to fit window while preserving 640x480 ratio
+        function scaleCanvas() {
+            const windowRatio = window.innerWidth / window.innerHeight;
+            const canvasRatio = 640 / 480;
+            let scale;
+            if(windowRatio > canvasRatio) {
+                scale = window.innerHeight / 480;
+            } else {
+                scale = window.innerWidth / 640;
+            }
+            canvas.style.transform = `scale(${scale})`;
+            canvas.style.transformOrigin = "top left";
+        }
+
+        window.addEventListener("resize", scaleCanvas);
+        scaleCanvas();
+    });
 
     // Pointer lock on click
     screenContainer.addEventListener("click", () => {
