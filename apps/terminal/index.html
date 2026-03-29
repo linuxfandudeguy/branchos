@@ -1,1 +1,95 @@
-<!doctype html> <title>wasmdsl</title> <script src="./libv86.js"></script> <style> /* Make the screen container fill the entire viewport */ html, body { margin: 0; padding: 0; height: 100%; width: 100%; background-color: black; /* optional, but recommended for a terminal feel */ overflow: hidden; } #screen_container { height: 100%; width: 100%; display: flex; justify-content: center; align-items: center; } #screen_container canvas { display: block; width: 100%; height: 100%; cursor: none; /* Hide the mouse cursor over the canvas */ } </style> <script> "use strict"; window.onload = function() { var emulator = new V86({ screen_container: document.getElementById("screen_container"), bios: { url: "./bios/seabios.bin", }, vga_bios: { url: "./bios/vgabios.bin", }, hda: { url: "./tilck-hda.img", // boot from this hard disk image async: true }, autostart: true, mouse_relative: true }); const screenContainer = document.getElementById("screen_container"); // Request pointer lock on click screenContainer.addEventListener("click", () => { if (document.pointerLockElement !== screenContainer) { screenContainer.requestPointerLock(); } }); document.getElementById("save_file").onclick = async function() { const new_state = await emulator.save_state(); var a = document.createElement("a"); a.download = "v86state.bin"; a.href = window.URL.createObjectURL(new Blob([new_state])); a.dataset.downloadurl = "application/octet-stream:" + a.download + ":" + a.href; a.click(); this.blur(); }; document.getElementById("restore_file").onchange = function() { if(this.files.length) { var filereader = new FileReader(); emulator.stop(); filereader.onload = async function(e) { await emulator.restore_state(e.target.result); emulator.run(); }; filereader.readAsArrayBuffer(this.files[0]); this.value = ""; } this.blur(); }; }; </script> <input id="save_file" type="button" value="Save state to file"> Restore from file: <input id="restore_file" type="file"> <hr> <!-- A minimal structure for the ScreenAdapter defined in browser/screen.js --> <div id="screen_container"> <div style="white-space: pre; font: 14px monospace; line-height: 14px"></div> <canvas></canvas> </div>
+<!doctype html>
+<title>wasmdsl</title>
+
+<script src="./libv86.js"></script>
+<style>
+    /* Make the screen container fill the entire viewport */
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+        background-color: black; /* optional, but recommended for a terminal feel */
+        overflow: hidden;
+    }
+    #screen_container {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    #screen_container canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        cursor: none; /* Hide the mouse cursor over the canvas */
+    }
+</style>
+
+<script>
+"use strict";
+
+window.onload = function() {
+    var emulator = new V86({
+        screen_container: document.getElementById("screen_container"),
+        bios: {
+            url: "./bios/seabios.bin",
+        },
+        vga_bios: {
+            url: "./bios/vgabios.bin",
+        },
+        hda: {
+            url: "./tilck-hda.img",  // boot from this hard disk image
+            async: true
+        },
+        autostart: true,
+        mouse_relative: true 
+    });
+
+    const screenContainer = document.getElementById("screen_container");
+
+    // Request pointer lock on click
+    screenContainer.addEventListener("click", () => {
+        if (document.pointerLockElement !== screenContainer) {
+            screenContainer.requestPointerLock();
+        }
+    });
+
+    document.getElementById("save_file").onclick = async function() {
+        const new_state = await emulator.save_state();
+        var a = document.createElement("a");
+        a.download = "v86state.bin";
+        a.href = window.URL.createObjectURL(new Blob([new_state]));
+        a.dataset.downloadurl = "application/octet-stream:" + a.download + ":" + a.href;
+        a.click();
+        this.blur();
+    };
+
+    document.getElementById("restore_file").onchange = function() {
+        if(this.files.length) {
+            var filereader = new FileReader();
+            emulator.stop();
+
+            filereader.onload = async function(e) {
+                await emulator.restore_state(e.target.result);
+                emulator.run();
+            };
+
+            filereader.readAsArrayBuffer(this.files[0]);
+            this.value = "";
+        }
+        this.blur();
+    };
+};
+</script>
+
+<input id="save_file" type="button" value="Save state to file">
+Restore from file: <input id="restore_file" type="file">
+<hr>
+
+<!-- A minimal structure for the ScreenAdapter defined in browser/screen.js -->
+<div id="screen_container">
+    <div style="white-space: pre; font: 14px monospace; line-height: 14px"></div>
+    <canvas></canvas>
+</div>
