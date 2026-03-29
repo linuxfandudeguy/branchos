@@ -2,6 +2,7 @@
 const terminalApp = {
     id: "terminal",
     icon: "bi-terminal",
+    taskbar: true, // show on taskbar
     title: "Terminal (tlick kernal by vvaltchev, v86)",
     html: `<iframe src="./apps/terminal/index.html" style="width:100%;height:100%;border:none;"></iframe>`
 };
