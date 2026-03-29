@@ -93,7 +93,7 @@ function closeWindow(btn){ btn.closest('.window-wrapper').remove(); }
 /* ================================
    INITIALIZE TASKBAR AFTER LOADING APPS
 ================================ */
-const appFiles = ["apps/terminal.js"];
+const appFiles = ["apps/terminal.js","apps/settings.js"];
 
 window.onload = ()=>{
     loadAppsFromFiles(appFiles, "taskbar", (apps)=>{
