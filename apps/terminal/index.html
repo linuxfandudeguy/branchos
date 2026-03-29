@@ -5,7 +5,6 @@
 <title>wasmdsl</title>
 <script src="./libv86.js"></script>
 <style>
-    /* Full viewport container */
     html, body {
         margin: 0;
         padding: 0;
@@ -19,7 +18,6 @@
         justify-content: flex-start;
     }
 
-    /* Toolbar for Save/Restore buttons */
     #toolbar {
         margin: 5px;
         color: white;
@@ -27,7 +25,6 @@
         z-index: 10;
     }
 
-    /* Screen container for v86 */
     #screen_container {
         flex: 1;
         display: flex;
@@ -35,36 +32,25 @@
         align-items: center;
         width: 100%;
         background-color: black;
+        position: relative;
     }
 
-    /* Canvas styling */
     #screen_container canvas {
-        display: block;
-        width: 640px;   /* native VGA width */
-        height: 480px;  /* native VGA height */
-        image-rendering: pixelated; /* keeps text sharp when scaled */
-        cursor: none;
+        width: 640px;  /* displayed width */
+        height: 480px; /* displayed height */
+        image-rendering: pixelated;
         background-color: black;
-    }
-
-    /* Optional: make canvas scale on smaller screens */
-    @media (max-width: 700px) {
-        #screen_container canvas {
-            width: 100%;
-            height: auto;
-        }
+        cursor: none;
     }
 </style>
 </head>
 <body>
-    <!-- Toolbar -->
     <div id="toolbar">
         <input id="save_file" type="button" value="Save state to file">
         Restore from file: <input id="restore_file" type="file">
         <hr style="border-color: white;">
     </div>
 
-    <!-- v86 Screen -->
     <div id="screen_container">
         <canvas></canvas>
     </div>
@@ -74,8 +60,9 @@
 
 window.onload = function() {
     const screenContainer = document.getElementById("screen_container");
+    const canvas = screenContainer.querySelector("canvas");
 
-    // Initialize v86 emulator
+    // Initialize emulator
     var emulator = new V86({
         screen_container: screenContainer,
         bios: { url: "./bios/seabios.bin" },
@@ -88,36 +75,52 @@ window.onload = function() {
         screen_height: 480
     });
 
-    // Request pointer lock on click
+    // Automatically scale canvas to fit window while preserving 640x480 ratio
+    function scaleCanvas() {
+        const windowRatio = window.innerWidth / window.innerHeight;
+        const canvasRatio = 640 / 480;
+        let scale;
+        if(windowRatio > canvasRatio) {
+            // window is wider -> fit by height
+            scale = window.innerHeight / 480;
+        } else {
+            // window is taller -> fit by width
+            scale = window.innerWidth / 640;
+        }
+        canvas.style.transform = `scale(${scale})`;
+        canvas.style.transformOrigin = "top left";
+    }
+
+    window.addEventListener("resize", scaleCanvas);
+    scaleCanvas();
+
+    // Pointer lock on click
     screenContainer.addEventListener("click", () => {
         if (document.pointerLockElement !== screenContainer) {
             screenContainer.requestPointerLock();
         }
     });
 
-    // Save state to file
+    // Save state
     document.getElementById("save_file").onclick = async function() {
         const new_state = await emulator.save_state();
         const a = document.createElement("a");
         a.download = "v86state.bin";
         a.href = window.URL.createObjectURL(new Blob([new_state]));
-        a.dataset.downloadurl = "application/octet-stream:" + a.download + ":" + a.href;
         a.click();
         this.blur();
     };
 
-    // Restore state from file
+    // Restore state
     document.getElementById("restore_file").onchange = function() {
-        if (this.files.length) {
-            const filereader = new FileReader();
+        if(this.files.length){
+            const reader = new FileReader();
             emulator.stop();
-
-            filereader.onload = async function(e) {
+            reader.onload = async function(e){
                 await emulator.restore_state(e.target.result);
                 emulator.run();
-            };
-
-            filereader.readAsArrayBuffer(this.files[0]);
+            }
+            reader.readAsArrayBuffer(this.files[0]);
             this.value = "";
         }
         this.blur();
