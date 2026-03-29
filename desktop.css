@@ -1,0 +1,60 @@
+/* ================================
+   DESKTOP CONTAINER
+================================ */
+#desktop {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 20px;
+    gap: 20px;
+    align-items: flex-start;
+    background: #0a246a; /* Optional: fallback background color */
+    height: 100%;
+}
+
+/* ================================
+   DESKTOP ICONS
+================================ */
+.desktop-icon {
+    width: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    font-size: 13px;
+    color: #ffffff;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.15s, color 0.15s;
+}
+
+.desktop-icon i {
+    font-size: 36px; /* icon size */
+    margin-bottom: 6px;
+}
+
+/* Text below icon */
+.desktop-icon span {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+/* Hover effect */
+.desktop-icon:hover {
+    transform: scale(1.2);
+    color: #00aaff; /* accent hover color */
+}
+
+/* Optional: icon background highlight */
+.desktop-icon::before {
+    content: '';
+    display: block;
+    width: 64px;
+    height: 64px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    margin-bottom: 6px;
+}
