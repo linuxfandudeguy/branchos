@@ -1,53 +1,92 @@
 <!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
 <title>wasmdsl</title>
-
 <script src="./libv86.js"></script>
 <style>
-    /* Make the screen container fill the entire viewport */
+    /* Full viewport container */
     html, body {
         margin: 0;
         padding: 0;
         height: 100%;
         width: 100%;
-        background-color: black; /* optional, but recommended for a terminal feel */
+        background-color: black;
         overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
     }
+
+    /* Toolbar for Save/Restore buttons */
+    #toolbar {
+        margin: 5px;
+        color: white;
+        font-family: monospace;
+        z-index: 10;
+    }
+
+    /* Screen container for v86 */
     #screen_container {
-        height: 100%;
-        width: 100%;
+        flex: 1;
         display: flex;
         justify-content: center;
         align-items: center;
+        width: 100%;
+        background-color: black;
     }
+
+    /* Canvas styling */
     #screen_container canvas {
         display: block;
-        width: 100%;
-        height: 100%;
-        cursor: none; /* Hide the mouse cursor over the canvas */
+        width: 640px;   /* native VGA width */
+        height: 480px;  /* native VGA height */
+        image-rendering: pixelated; /* keeps text sharp when scaled */
+        cursor: none;
+        background-color: black;
+    }
+
+    /* Optional: make canvas scale on smaller screens */
+    @media (max-width: 700px) {
+        #screen_container canvas {
+            width: 100%;
+            height: auto;
+        }
     }
 </style>
+</head>
+<body>
+    <!-- Toolbar -->
+    <div id="toolbar">
+        <input id="save_file" type="button" value="Save state to file">
+        Restore from file: <input id="restore_file" type="file">
+        <hr style="border-color: white;">
+    </div>
+
+    <!-- v86 Screen -->
+    <div id="screen_container">
+        <canvas></canvas>
+    </div>
 
 <script>
 "use strict";
 
 window.onload = function() {
-    var emulator = new V86({
-        screen_container: document.getElementById("screen_container"),
-        bios: {
-            url: "./bios/seabios.bin",
-        },
-        vga_bios: {
-            url: "./bios/vgabios.bin",
-        },
-        hda: {
-            url: "./tilck-hda.img",  // boot from this hard disk image
-            async: true
-        },
-        autostart: true,
-        mouse_relative: true 
-    });
-
     const screenContainer = document.getElementById("screen_container");
+
+    // Initialize v86 emulator
+    var emulator = new V86({
+        screen_container: screenContainer,
+        bios: { url: "./bios/seabios.bin" },
+        vga_bios: { url: "./bios/vgabios.bin" },
+        hda: { url: "./tilck-hda.img", async: true },
+        autostart: true,
+        mouse_relative: true,
+        screen_adapter: "canvas",
+        screen_width: 640,
+        screen_height: 480
+    });
 
     // Request pointer lock on click
     screenContainer.addEventListener("click", () => {
@@ -56,9 +95,10 @@ window.onload = function() {
         }
     });
 
+    // Save state to file
     document.getElementById("save_file").onclick = async function() {
         const new_state = await emulator.save_state();
-        var a = document.createElement("a");
+        const a = document.createElement("a");
         a.download = "v86state.bin";
         a.href = window.URL.createObjectURL(new Blob([new_state]));
         a.dataset.downloadurl = "application/octet-stream:" + a.download + ":" + a.href;
@@ -66,9 +106,10 @@ window.onload = function() {
         this.blur();
     };
 
+    // Restore state from file
     document.getElementById("restore_file").onchange = function() {
-        if(this.files.length) {
-            var filereader = new FileReader();
+        if (this.files.length) {
+            const filereader = new FileReader();
             emulator.stop();
 
             filereader.onload = async function(e) {
@@ -83,14 +124,5 @@ window.onload = function() {
     };
 };
 </script>
-
-<input id="save_file" type="button" value="Save state to file">
-Restore from file: <input id="restore_file" type="file">
-<hr>
-
-<!-- A minimal structure for the ScreenAdapter defined in browser/screen.js -->
-<div id="screen_container">
-    <div style="white-space: pre; font: 14px monospace; line-height: 14px"></div>
-    <canvas></canvas>
-</div>
-
+</body>
+</html>
