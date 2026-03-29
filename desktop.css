@@ -1,19 +1,5 @@
-/* ================================
-   DESKTOP CONTAINER
-================================ */
-#desktop {
-    display: flex;
-    flex-wrap: wrap;
-    padding: 20px;
-    gap: 20px;
-    align-items: flex-start;
-    height: 100%;
-}
-
-/* ================================
-   DESKTOP ICONS
-================================ */
 .desktop-icon {
+    position: relative; /* required for absolute positioning of highlight */
     width: 80px;
     display: flex;
     flex-direction: column;
@@ -29,7 +15,32 @@
 
 .desktop-icon i {
     font-size: 36px; /* icon size */
-    margin-bottom: 6px;
+    z-index: 1; /* bring icon above highlight */
+}
+
+/* Optional: icon background highlight */
+.desktop-icon::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 64px;
+    height: 64px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    z-index: 0; /* behind icon */
+    transition: background 0.15s;
+}
+
+/* Hover effect */
+.desktop-icon:hover {
+    transform: scale(1.2);
+    color: #00aaff; /* accent hover color */
+}
+
+.desktop-icon:hover::before {
+    background: rgba(0, 170, 255, 0.15); /* highlight changes on hover */
 }
 
 /* Text below icon */
@@ -39,21 +50,5 @@
     overflow: hidden;
     text-overflow: ellipsis;
     width: 100%;
-}
-
-/* Hover effect */
-.desktop-icon:hover {
-    transform: scale(1.2);
-    color: #00aaff; /* accent hover color */
-}
-
-/* Optional: icon background highlight */
-.desktop-icon::before {
-    content: '';
-    display: block;
-    width: 64px;
-    height: 64px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    margin-bottom: 6px;
+    margin-top: 6px;
 }
