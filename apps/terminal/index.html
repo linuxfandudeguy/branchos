@@ -8,32 +8,24 @@ html, body {
     height: 100%;
     width: 100%;
     background-color: black;
-    overflow: auto; /* allow scrolling if needed */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
+    overflow: hidden;
 }
 
 #screen_container {
+    height: 100%;
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 20px; /* optional spacing from top */
 }
 
+/* Make canvas smaller */
 #screen_container canvas {
     display: block;
-    width: 800px;   /* fixed width */
-    height: 600px;  /* fixed height */
-    cursor: none;   /* hide mouse cursor over the canvas */
-    border: 2px solid #888; /* optional border to see edges */
-}
-
-#controls {
-    margin-top: 10px;
-    color: white;
-    font-family: monospace;
+    width: 800px;   /* adjust width as needed */
+    height: 600px;  /* adjust height as needed */
+    cursor: none;   /* hide the mouse cursor over the canvas */
+    border: 2px solid #555; /* optional, helps see the canvas boundary */
 }
 </style>
 <script>
