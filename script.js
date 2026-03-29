@@ -1,14 +1,14 @@
 let zIndexCounter = 1;
 let wallpaperData = null;
 
-// Track minimized windows globally
+// Track minimized windows
 let minimizedWindows = {};
 
 /* ================================
    DYNAMIC APP LOADER
 ================================ */
 function loadAppsFromFiles(appFiles, taskbarId = "taskbar", callback) {
-    window.Apps = []; // Reset global Apps array
+    window.Apps = [];
     let loaded = 0;
 
     appFiles.forEach(src => {
@@ -49,9 +49,14 @@ function openWindow(id, html, title, fullscreen = true) {
     wrapper.className = "window-wrapper";
     wrapper.id = id;
     wrapper.style.zIndex = zIndexCounter++;
+    wrapper.style.position = "absolute";
+    wrapper.style.width = "800px";
+    wrapper.style.height = "600px";
+    wrapper.style.top = "50px";
+    wrapper.style.left = "50px";
 
     wrapper.innerHTML = `
-        <div class="window active">
+        <div class="window active" style="width:100%;height:100%;">
             <div class="title-bar">
                 <div class="title-bar-text">${title}</div>
                 <div class="title-bar-controls">
@@ -103,32 +108,27 @@ function minimizeWindow(id) {
 }
 
 function maximizeWindow(btn) {
-    const win = btn.closest('.window-wrapper');
+    const win = btn.closest(".window-wrapper");
 
     if (win.classList.contains("max")) {
-        // Restore
-        if (document.fullscreenElement === win) document.exitFullscreen().catch(err => console.log(err));
-        win.style.width = "600px";
-        win.style.height = "400px";
-        win.style.top = "";
-        win.style.left = "";
+        // Restore to default size
+        win.style.width = "800px";
+        win.style.height = "600px";
+        win.style.top = "50px";
+        win.style.left = "50px";
         win.classList.remove("max");
     } else {
-        // Maximize container
+        // Maximize
         win.style.top = "0";
         win.style.left = "0";
         win.style.width = "100%";
         win.style.height = "calc(100% - 48px)";
         win.classList.add("max");
-
-        // Attempt fullscreen
-        if (win.requestFullscreen) win.requestFullscreen().catch(err => console.log(err));
     }
 }
 
 function closeWindow(btn) {
-    const win = btn.closest('.window-wrapper');
-    if (document.fullscreenElement === win) document.exitFullscreen().catch(err => console.log(err));
+    const win = btn.closest(".window-wrapper");
     win.remove();
     delete minimizedWindows[win.id];
 }
