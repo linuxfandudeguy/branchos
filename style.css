@@ -1,7 +1,7 @@
 body {
     margin:0;
     overflow:hidden;
-    background:#0a246a url('./wallpaper.png.png') no-repeat center/cover;
+    background:#0a246a url('./wallpaper.png.png') no-repeat top/cover;
     font-family:Segoe UI, sans-serif;
 }
 
