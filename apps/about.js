@@ -1,8 +1,10 @@
-// apps/settings.js
+// apps/about.js
 
 const settingsApp = {
     id: "about",
     icon: "bi bi-newspaper",
+    taskbar: true, // show on taskbar
+
     title: "About",
     html: `
         <div style="padding:20px;font-family:Segoe UI,sans-serif;color:#111;max-width:600px;margin:auto;line-height:1.6;">
