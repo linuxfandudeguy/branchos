@@ -126,7 +126,7 @@ function closeWindow(btn) {
 /* ================================
    INITIALIZE DESKTOP & TASKBAR
 ================================ */
-const appFiles = ["apps/about.js", "apps/terminal.js"];
+const appFiles = ["apps/about.js", "apps/terminal.js", "apps/calculator.js"];
 
 window.onload = () => {
     loadAppsSequentially(appFiles, (apps) => {
