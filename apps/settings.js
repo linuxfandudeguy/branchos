@@ -17,37 +17,39 @@ const settingsApp = {
             
             <button id="applySettingsBtn" class="btn btn-primary">Apply</button>
         </div>
-    `,
-    onLoad: function(wrapper){
-        // Wrapper is the window-body container
-        const usernameInput = wrapper.querySelector("#usernameInput");
-        const wallpaperInput = wrapper.querySelector("#wallpaperInput");
-        const applyBtn = wrapper.querySelector("#applySettingsBtn");
 
-        // Load saved values if any
-        if(localStorage.getItem("username")) usernameInput.value = localStorage.getItem("username");
-        if(localStorage.getItem("wallpaperData")) {
-            document.body.style.backgroundImage = `url(${localStorage.getItem("wallpaperData")})`;
-        }
+        <script>
+            (function(){
+                const usernameInput = document.querySelector("#usernameInput");
+                const wallpaperInput = document.querySelector("#wallpaperInput");
+                const applyBtn = document.querySelector("#applySettingsBtn");
 
-        // Apply button
-        applyBtn.onclick = () => {
-            const username = usernameInput.value.trim();
-            localStorage.setItem("username", username);
-
-            if(wallpaperInput.files.length > 0){
-                const file = wallpaperInput.files[0];
-                const reader = new FileReader();
-                reader.onload = function(e){
-                    localStorage.setItem("wallpaperData", e.target.result);
-                    document.body.style.backgroundImage = `url(${e.target.result})`;
+                // Load saved values if any
+                if(localStorage.getItem("username")) usernameInput.value = localStorage.getItem("username");
+                if(localStorage.getItem("wallpaperData")) {
+                    document.body.style.backgroundImage = 'url(' + localStorage.getItem("wallpaperData") + ')';
                 }
-                reader.readAsDataURL(file);
-            }
 
-            alert("Settings applied and saved!");
-        }
-    }
+                // Apply button
+                applyBtn.onclick = () => {
+                    const username = usernameInput.value.trim();
+                    localStorage.setItem("username", username);
+
+                    if(wallpaperInput.files.length > 0){
+                        const file = wallpaperInput.files[0];
+                        const reader = new FileReader();
+                        reader.onload = function(e){
+                            localStorage.setItem("wallpaperData", e.target.result);
+                            document.body.style.backgroundImage = 'url(' + e.target.result + ')';
+                        }
+                        reader.readAsDataURL(file);
+                    }
+
+                    alert("Settings applied and saved!");
+                }
+            })();
+        </script>
+    `
 };
 
 // Push to Apps array for dynamic loader
