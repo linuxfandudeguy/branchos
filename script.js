@@ -2,9 +2,29 @@ let zIndexCounter = 1;
 let wallpaperData = null;
 let username = "";
 
-// ========================
-// WINDOW SYSTEM
-// ========================
+/* ================================
+   DYNAMIC APP LOADER FUNCTION
+================================ */
+function loadAppsFromFiles(appFiles, taskbarId="taskbar", callback){
+    window.Apps = []; // Reset global Apps array
+
+    let loaded = 0;
+    appFiles.forEach(src=>{
+        const s = document.createElement("script");
+        s.src = src;
+        s.onload = ()=>{
+            loaded++;
+            if(loaded === appFiles.length && typeof callback === "function"){
+                callback(window.Apps); // Return loaded apps
+            }
+        };
+        document.body.appendChild(s);
+    });
+}
+
+/* ================================
+   TASKBAR & WINDOW FUNCTIONS
+================================ */
 function openWindow(id, html, title, fullscreen=true){
     if(document.getElementById(id)) return;
 
@@ -35,9 +55,6 @@ function openWindow(id, html, title, fullscreen=true){
     makeDraggable(wrapper);
 }
 
-// ========================
-// DRAGGING
-// ========================
 function makeDraggable(wrapper){
     const bar = wrapper.querySelector(".title-bar");
     bar.onmousedown = function(e){
@@ -50,61 +67,43 @@ function makeDraggable(wrapper){
         }
 
         document.addEventListener("mousemove", move);
-        document.addEventListener("mouseup", ()=> document.removeEventListener("mousemove", move), {once:true});
+        document.addEventListener("mouseup", ()=> {
+            document.removeEventListener("mousemove", move);
+        }, {once:true});
     };
 }
 
-// ========================
-// WINDOW CONTROLS
-// ========================
 function minimizeWindow(btn){ btn.closest('.window-wrapper').style.display='none'; }
 function maximizeWindow(btn){
     const win = btn.closest('.window-wrapper');
-    if(win.classList.contains('max')){
-        win.style.width='600px'; win.style.height='400px';
-        win.classList.remove('max');
+    if(win.classList.contains("max")){
+        win.style.width="600px";
+        win.style.height="400px";
+        win.classList.remove("max");
     } else {
-        win.style.top='0'; win.style.left='0';
-        win.style.width='100%'; win.style.height='calc(100% - 48px)';
-        win.classList.add('max');
+        win.style.top="0";
+        win.style.left="0";
+        win.style.width="100%";
+        win.style.height="calc(100% - 48px)";
+        win.classList.add("max");
     }
 }
 function closeWindow(btn){ btn.closest('.window-wrapper').remove(); }
 
-// ========================
-// SETTINGS PANEL
-// ========================
-function toggleSettingsPanel(){
-    const panel=document.getElementById("settingsPanel");
-    panel.style.display = panel.style.display==="none"?"block":"none";
-}
+/* ================================
+   INITIALIZE TASKBAR AFTER LOADING APPS
+================================ */
+const appFiles = ["apps/terminal.js"];
 
-function applySettings(){
-    const userInput=document.getElementById("usernameInput").value;
-    if(userInput) username=userInput;
-
-    const wallpaperFile=document.getElementById("wallpaperInput").files[0];
-    if(wallpaperFile){
-        const reader=new FileReader();
-        reader.onload=function(e){
-            wallpaperData=e.target.result;
-            document.body.style.backgroundImage=`url(${wallpaperData})`;
-        };
-        reader.readAsDataURL(wallpaperFile);
-    }
-    alert(`Settings applied!\nUsername: ${username}`);
-}
-
-// ========================
-// LOAD APPS INTO TASKBAR
-// ========================
-function loadApps(appList){
-    const taskbar = document.getElementById("taskbar");
-    appList.forEach(app=>{
-        const btn=document.createElement("button");
-        btn.innerHTML=app.icon.includes("bi-")?`<i class="bi ${app.icon}"></i>`:app.icon;
-        btn.title=app.title;
-        btn.onclick=()=>openWindow(app.id, app.html, app.title, app.fullscreen!==false);
-        taskbar.appendChild(btn);
+window.onload = ()=>{
+    loadAppsFromFiles(appFiles, "taskbar", (apps)=>{
+        const taskbar = document.getElementById("taskbar");
+        apps.forEach(app=>{
+            const btn = document.createElement("button");
+            btn.innerHTML = app.icon.includes("bi-") ? `<i class="bi ${app.icon}"></i>` : app.icon;
+            btn.title = app.title;
+            btn.onclick = ()=> openWindow(app.id, app.html, app.title, app.fullscreen!==false);
+            taskbar.appendChild(btn);
+        });
     });
-}
+};
