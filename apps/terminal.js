@@ -2,8 +2,8 @@
 const terminalApp = {
     id: "terminal",
     icon: "bi-terminal",
-    title: "Terminal",
-    html: `<iframe src="https://webshell-omega.vercel.app/terminal.html" style="width:100%;height:100%;border:none;"></iframe>`
+    title: "Terminal (tlick kernal by vvaltchev, v86)",
+    html: `<iframe src="/v86/tlick.html" style="width:100%;height:100%;border:none;"></iframe>`
 };
 
 // Export for dynamic loader
