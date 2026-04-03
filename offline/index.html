@@ -273,6 +273,64 @@ window.onload = () => {
 })();
 
 </script>
+<script>
+// apps/about.js
 
+const settingsApp = {
+    id: "about",
+    icon: "bi bi-newspaper",
+    title: "About",
+    html: `
+        <div style="padding:20px;font-family:Segoe UI,sans-serif;color:#111;max-width:600px;margin:auto;line-height:1.6;">
+    <h2 style="margin-bottom:10px;">About ブランチ</h2>
+    
+    <img src="branch.png" alt="Branch Logo" style="width:120px;height:auto;margin-bottom:15px;border-radius:10px;">
+
+    <p>ブランチ (Branch) is a Web-based OS , influnced by <a href="https://github.com/nautilus-os/NautilusOS">NautilusOS.</a></p>
+    
+    <p
+    <p>Developed by: <strong>linuxfandudeguy</strong></p>
+
+    <button id="visitWebsiteBtn" class="btn btn-primary" style="margin-top:15px;">Visit Official Website</button>
+</div>
+    `
+};
+
+// Push to Apps array for dynamic loader
+window.Apps = window.Apps || [];
+window.Apps.push(settingsApp);
+
+</script>
+<script>
+// apps/terminal.js
+const terminalApp = {
+    id: "terminal",
+    icon: "bi-terminal",
+    taskbar: true, // show on taskbar
+    title: "Terminal (tlick kernal by vvaltchev, v86)",
+    html: `<iframe src="./apps/terminal/index.html" style="width:100%;height:100%;border:none;"></iframe>`
+};
+
+// Export for dynamic loader
+window.Apps = window.Apps || [];
+window.Apps.push(terminalApp);
+
+</script>
+<script>
+// apps/calculator.js
+const calculatorApp = {
+    id: "calculator",
+    icon: "bi bi-calculator",
+    taskbar: true, // show on taskbar
+
+    title: "Calculator",
+    html: `<iframe src="./apps/calculator.html" style="width:100%;height:100%;border:none;"></iframe>`
+};
+
+// Push to Apps array for dynamic loader
+window.Apps = window.Apps || [];
+window.Apps.push(calculatorApp);
+
+</script>
 </body>
 </html>
