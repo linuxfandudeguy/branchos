@@ -116,35 +116,9 @@ body {
 let zIndexCounter = 1;
 let minimizedWindows = {};
 
-/* ================================
-   DYNAMIC APP LOADER WITH DELAY
-================================ */
-function loadAppsSequentially(appFiles, callback, delay = 100) {
-    window.Apps = [];
-
-    function loadNext(index) {
-        if (index >= appFiles.length) {
-            if (typeof callback === "function") callback(window.Apps);
-            return;
-        }
-
-        const script = document.createElement("script");
-        script.src = appFiles[index];
-        script.onload = () => setTimeout(() => loadNext(index + 1), delay);
-        document.body.appendChild(script);
-    }
-
-    loadNext(0);
-}
-
-/* ================================
-   OPEN WINDOW
-================================ */
 function openWindow(id, html, title) {
     let win = document.getElementById(id);
-
     if (win) {
-        // Restore minimized
         if (win.style.display === "none") {
             win.style.display = "block";
             delete minimizedWindows[id];
@@ -183,31 +157,21 @@ function openWindow(id, html, title) {
     makeDraggable(win);
 }
 
-/* ================================
-   MAKE WINDOW DRAGGABLE
-================================ */
 function makeDraggable(wrapper) {
     const bar = wrapper.querySelector(".title-bar");
     bar.onmousedown = function(e) {
         const rect = wrapper.getBoundingClientRect();
         const offsetX = e.clientX - rect.left;
         const offsetY = e.clientY - rect.top;
-
         function move(ev) {
             wrapper.style.left = ev.clientX - offsetX + "px";
             wrapper.style.top = ev.clientY - offsetY + "px";
         }
-
         document.addEventListener("mousemove", move);
-        document.addEventListener("mouseup", () => {
-            document.removeEventListener("mousemove", move);
-        }, { once: true });
+        document.addEventListener("mouseup", () => document.removeEventListener("mousemove", move), { once: true });
     };
 }
 
-/* ================================
-   WINDOW CONTROLS
-================================ */
 function minimizeWindow(id) {
     const win = document.getElementById(id);
     if (!win) return;
@@ -238,37 +202,30 @@ function closeWindow(btn) {
     delete minimizedWindows[win.id];
 }
 
-/* ================================
-   INITIALIZE DESKTOP & TASKBAR
-================================ */
-const appFiles = ["./apps/about.js", "./apps/terminal.js", "./apps/calculator.js"];
-
 window.onload = () => {
-    loadAppsSequentially(appFiles, (apps) => {
-        const desktop = document.getElementById("desktop");
-        const taskbar = document.getElementById("taskbar");
+    const desktop = document.getElementById("desktop");
+    const taskbar = document.getElementById("taskbar");
 
-        apps.forEach(app => {
-            // Create desktop icon
-            const desktopIcon = document.createElement("div");
-            desktopIcon.className = "desktop-icon";
-            desktopIcon.id = `desktop-icon-${app.id}`;
-            desktopIcon.innerHTML = app.icon.includes("bi-")
-                ? `<i class="bi ${app.icon}"></i><span>${app.title}</span>`
-                : `<span>${app.title}</span>`;
-            desktopIcon.onclick = () => openWindow(app.id, app.html, app.title);
-            desktop.appendChild(desktopIcon);
+    if (!window.Apps) return;
 
-            // Add to taskbar if taskbar:true
-            if (app.taskbar) {
-                const btn = document.createElement("button");
-                btn.innerHTML = app.icon.includes("bi-") ? `<i class="bi ${app.icon}"></i>` : app.icon;
-                btn.title = app.title;
-                btn.onclick = () => openWindow(app.id, app.html, app.title);
-                taskbar.appendChild(btn);
-            }
-        });
-    }, 100); // 100ms delay between loading apps
+    window.Apps.forEach(app => {
+        const desktopIcon = document.createElement("div");
+        desktopIcon.className = "desktop-icon";
+        desktopIcon.id = `desktop-icon-${app.id}`;
+        desktopIcon.innerHTML = app.icon.includes("bi-")
+            ? `<i class="bi ${app.icon}"></i><span>${app.title}</span>`
+            : `<span>${app.title}</span>`;
+        desktopIcon.onclick = () => openWindow(app.id, app.html, app.title);
+        desktop.appendChild(desktopIcon);
+
+        if (app.taskbar) {
+            const btn = document.createElement("button");
+            btn.innerHTML = app.icon.includes("bi-") ? `<i class="bi ${app.icon}"></i>` : app.icon;
+            btn.title = app.title;
+            btn.onclick = () => openWindow(app.id, app.html, app.title);
+            taskbar.appendChild(btn);
+        }
+    });
 };
 
 </script>
